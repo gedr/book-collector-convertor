@@ -39,9 +39,102 @@ public class BookDateTest {
 
     @Test
     public void testSetYearForLegalValue() {
-        BookDate bd = new BookDate(20016);
-        assertThat(bd, notNullValue());
-        assertThat(bd.getIntValue(), not(equalTo(0)));
+        int year = 2016;
+        BookDate bd = new BookDate(year);
+        assertThat(bd.getYear(), equalTo(year));
+        year = 1960;
+        bd.setYear(year);
+        assertThat(bd.getYear(), equalTo(year));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetYearForIllegalValue() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016000);
     }
     
+    @Test
+    public void testSetMonthForLegalValue() {
+        int month = 1;
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(month);
+        assertThat(bd.getMonth(), equalTo(month));
+        month = 12;
+        bd.setMonth(month);
+        assertThat(bd.getMonth(), equalTo(month));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMonthForIllegalValue_13() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(13);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMonthForIllegalValue_0() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(0);
+    }
+
+    @Test
+    public void testSetDayForLegalValue() {
+        int month = 1;
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(month);
+        bd.set
+        assertThat(bd.getMonth(), equalTo(month));
+        month = 12;
+        bd.setMonth(month);
+        assertThat(bd.getMonth(), equalTo(month));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMonthForIllegalValue_13() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(13);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMonthForIllegalValue_0() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        bd.setMonth(0);
+    }
+
+    @Test
+    public void testLeapYear() {
+        BookDate bd = new BookDate();
+        bd.setYear(2016);
+        assertTrue(bd.isLeapYear());
+        bd.setYear(1984);
+        assertTrue(bd.isLeapYear());
+        bd.setYear(1600);
+        assertTrue(bd.isLeapYear());
+        bd.setYear(2000);
+        assertTrue(bd.isLeapYear());
+        bd.setYear(2400);
+        assertTrue(bd.isLeapYear());
+
+        bd.setYear(1997);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(2013);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(1700);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(1800);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(1900);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(2100);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(2200);
+        assertFalse(bd.isLeapYear());
+        bd.setYear(2300);
+        assertFalse(bd.isLeapYear());
+    }
 }
