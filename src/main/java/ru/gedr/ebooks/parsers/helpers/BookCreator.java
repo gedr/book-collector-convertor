@@ -53,7 +53,6 @@ public class BookCreator {
             case 2:
                 book.setRare(toBool(text));
                 break;
-
         }
             
     }
