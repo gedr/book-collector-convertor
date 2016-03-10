@@ -49,16 +49,13 @@ public class BookDateTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetYearForIllegalValue() {
-        BookDate bd = new BookDate();
-        bd.setYear(2016000);
+        BookDate bd = new BookDate(2016000);
     }
     
     @Test
     public void testSetMonthForLegalValue() {
         int month = 1;
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
-        bd.setMonth(month);
+        BookDate bd = new BookDate(2016, month, BookDate.PeriodType.MONTH);
         assertThat(bd.getMonth(), equalTo(month));
         month = 12;
         bd.setMonth(month);
@@ -67,45 +64,34 @@ public class BookDateTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetMonthForIllegalValue_13() {
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
-        bd.setMonth(13);
+        BookDate bd = new BookDate(2016, 13, BookDate.PeriodType.MONTH);
+        fail();
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testSetMonthForIllegalValue_0() {
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
+        BookDate bd = new BookDate(2016, 4, 15);
         bd.setMonth(0);
     }
 
     @Test
     public void testSetDayForLegalValue() {
         int month = 1;
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
+        BookDate bd = new BookDate(2016);
         bd.setMonth(month);
-        bd.set
+        bd.setDay(31);
         assertThat(bd.getMonth(), equalTo(month));
-        month = 12;
+        month = 2;
+        bd.setDay(29);
         bd.setMonth(month);
         assertThat(bd.getMonth(), equalTo(month));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetMonthForIllegalValue_13() {
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
-        bd.setMonth(13);
+    public void testSetDayForIllegalValue() {
+        BookDate bd = new BookDate(2013, 2, 29);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetMonthForIllegalValue_0() {
-        BookDate bd = new BookDate();
-        bd.setYear(2016);
-        bd.setMonth(0);
-    }
-
     @Test
     public void testLeapYear() {
         BookDate bd = new BookDate();

@@ -5,132 +5,103 @@
  */
 package ru.gedr.ebooks.entities;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.Validate;
-import ru.gedr.ebooks.entities.eums.CollectionVariant;
 
 /**
  *
  * @author egafarov
  */
+@NoArgsConstructor
 @ToString
+@Getter 
+@Setter
+@Entity
+@Table(name = "books")
+@DiscriminatorValue("2")
 public class Book extends Collection {
-    private static final long DAY_IN_MS = 1000 * 60 * 60 * 24;
-    private Date publicationDateStart;
-    private Date publicationDateStop;
-    private @Getter @Setter int qunatity;
-    private @Getter @Setter boolean rare;
-    private @Getter @Setter int volume;
-    private @Getter @Setter int issue;
-    private @Getter @Setter int numberOfPages;
-    private @Getter @Setter Collection collection;
+    @Column(name = "pub_date")
+    private int publicationDate;
+    @Column(name = "qunatity")
+    private int qunatity;
+    @Column(name = "rare")
+    private boolean rare;
+    @Column(name = "volume")
+    private int volume;
+    @Column(name = "issue")
+    private int issue;
+    @Column(name = "num_of_pages")
+    private int numberOfPages;
     
-    public Book() {
-        super(CollectionVariant.BOOK);
-    }
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(columnDefinition = "collection_id", referencedColumnName = "id")
+    private Collection collection;
+    
+    @OneToMany
+    private List<Chapter> chapters;
+    
+    
+    
     public void setPublicationDate(int year, int month, int day) {
         Validate.isTrue(year > 0, "year have illegal value");
-        Validate.isTrue((Calendar.JANUARY <= month) && (month <= Calendar.DECEMBER), "month have illegal value");
+        Validate.isTrue((1 <= month) && (month <= 12), "month have illegal value");
         Validate.isTrue((0 < day) && (day < 32), "day have illegal value");
-        
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, day);
-        publicationDateStart = c.getTime();
-        c.add(Calendar.DAY_OF_YEAR, 1);
-        publicationDateStop = c.getTime();
+        publicationDate = new BookDate(year, month, day).getIntValue();
     }
     
     public void setPublicationDateOnlyYear(int year) {
         Validate.isTrue(year > 0, "year have illegal value");
-
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, Calendar.JANUARY);
-        publicationDateStart = c.getTime();
-        c.add(Calendar.YEAR, 1);
-        publicationDateStop = c.getTime();
+        publicationDate = new BookDate(year).getIntValue();
     }
 
     public void setPublicationDateOnlyYearAndHalfYear(int year, int halfyear) {
         Validate.isTrue(year > 0, "year have illegal value");
         Validate.isTrue((0 < halfyear) && (halfyear < 3), "halfyear have illegal value");
-
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, Calendar.JANUARY + (halfyear - 1) * 6);        
-        publicationDateStart = c.getTime();
-        c.add(Calendar.MONTH, 6);
-        publicationDateStop = c.getTime();
+        publicationDate = new BookDate(year, halfyear, BookDate.PeriodType.HALFYEAR).getIntValue();
     }
     
     public void setPublicationDateOnlyYearAndQuarter(int year, int quarter) {
         Validate.isTrue(year > 0, "year have illegal value");
         Validate.isTrue((0 < quarter) && (quarter < 5), "quarter have illegal value");
-        
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, Calendar.JANUARY + (quarter - 1) * 3);
-        publicationDateStart = c.getTime();
-        c.add(Calendar.MONTH, 3);
-        publicationDateStop = c.getTime();
+        publicationDate = new BookDate(year, quarter, BookDate.PeriodType.QUARTER).getIntValue();
     }
 
     public void setPublicationDateOnlyYearAndMonth(int year, int month) {
         Validate.isTrue(year > 0, "year have illegal value");
-        Validate.isTrue((Calendar.JANUARY <= month) && (month <= Calendar.DECEMBER), "month have illegal value");
-
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        publicationDateStart = c.getTime();
-        c.add(Calendar.MONTH, 1);
-        publicationDateStop = c.getTime();
+        Validate.isTrue((1 <= month) && (month <= 12), "month have illegal value");
+        publicationDate = new BookDate(year, month, BookDate.PeriodType.MONTH).getIntValue();
     }
 
     public boolean isPublicationDateHaveYearMonthDay() {
-        if ((publicationDateStart == null) || (publicationDateStop == null)) {
-            return false;
-        }
-        return (publicationDateStop.getTime() - publicationDateStart.getTime()) < DAY_IN_MS * 2;
+        return BookDate.from(publicationDate).getDay() != 0;
     }
 
     public boolean isPublicationDateHaveYearMonth() {
-        if ((publicationDateStart == null) || (publicationDateStop == null)) {
-            return false;
-        }
-        long diff = publicationDateStop.getTime() - publicationDateStart.getTime();
-        return ((DAY_IN_MS < diff) && (diff < DAY_IN_MS * 32));
+        return BookDate.from(publicationDate).getMonth() != 0;
     }
 
     public boolean isPublicationDateHaveYearQuarter() {
-        if ((publicationDateStart == null) || (publicationDateStop == null)) {
-            return false;
-        }
-        long diff = publicationDateStop.getTime() - publicationDateStart.getTime();
-        return ((DAY_IN_MS * 32 < diff) && (diff < DAY_IN_MS * 32 * 3));
+        return BookDate.from(publicationDate).getQuarter() != 0;
     }
 
     public boolean isPublicationDateHaveYearHalfyear() {
-        if ((publicationDateStart == null) || (publicationDateStop == null)) {
-            return false;
-        }
-        long diff = publicationDateStop.getTime() - publicationDateStart.getTime();
-        return ((DAY_IN_MS * 32 * 3 < diff) && (diff < DAY_IN_MS * 32 * 6));
+        return BookDate.from(publicationDate).getHalfyear() != 0;
     }
 
     public boolean isPublicationDateHaveYear() {
-        if ((publicationDateStart == null) || (publicationDateStop == null)) {
-            return false;
-        }
-        long diff = publicationDateStop.getTime() - publicationDateStart.getTime();
-        return ((DAY_IN_MS * 32 * 6 < diff) && (diff < DAY_IN_MS * 32 * 12));
+        return BookDate.from(publicationDate).getYear() != 0;
     }
     
 }
@@ -141,8 +112,7 @@ CREATE TABLE BOOK (
 book_id 		INTEGER PRIMARY KEY,
 
 --  м/о отмечать не т/о конкретные даты, но и периоды (месяц, квартал, полугодие)
-pub_date_start	INTEGER DEFAULT NULL, 
-pub_date_stop	INTEGER DEFAULT NULL,
+pub_date	INTEGER DEFAULT NULL, 
 
 quantity		INTEGER DEFAULT 1 NOT NULL,
 rare			BOOLEAN DEFAULT FALSE NOT NULL,

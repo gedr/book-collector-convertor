@@ -11,38 +11,61 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.gedr.ebooks.entities.eums.CollectionVariant;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+
 /**
  *
  * @author egafarov
  */
+@Getter 
+@Setter
 @ToString
+@Entity
+@Table(name = "collections")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "variant")
+@DiscriminatorValue("1")
 public class Collection {
-    private @Getter @Setter Integer id;
-    private @Getter @Setter String title;
-    private @Getter @Setter String subTitle;
-    private @Getter @Setter Date createDate;
-    private @Getter @Setter Date editDate;
-    private @Getter @Setter Date readDate;
-    private @Getter @Setter Double rate;
-    private @Getter @Setter String tags;
-    private @Getter @Setter Memo notes;
-    private @Getter @Setter Memo plot;
-    private short variant;
-    
-    protected Collection(CollectionVariant variant) {
-        setVariant(variant);
-    }
+    @Id
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "title")
+    private String title;
+    @Column(name = "subTitle")
+    private String subTitle;
+    @Column(name = "createDate")
+    private Date createDate;
+    @Column(name = "editDate")
+    private Date editDate;
+    @Column(name = "readDate")
+    private Date readDate;
+    @Column(name = "rate")
+    private Double rate;
+    @Column(name = "tags")
+    private String tags;
+
+    @OneToOne()
+    @JoinColumn(columnDefinition = "notes_id", referencedColumnName = "id")
+    private Memo notes;
+
+    @OneToOne()
+    @JoinColumn(columnDefinition = "plot_id", referencedColumnName = "id")
+    private Memo plot;
     
     public Collection() {
-        this(CollectionVariant.COLLECTION);
-    }
-            
-    public CollectionVariant getVariant() {
-        return CollectionVariant.find(variant);
-    }
-
-    public void setVariant(CollectionVariant variant) {
-        this.variant = variant.getValue();
     }
 }
 
