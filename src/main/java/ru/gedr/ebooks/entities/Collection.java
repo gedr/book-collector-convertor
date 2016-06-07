@@ -5,11 +5,11 @@
  */
 package ru.gedr.ebooks.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.gedr.ebooks.entities.eums.CollectionVariant;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -19,11 +19,9 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 
 /**
@@ -38,7 +36,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "variant")
 @DiscriminatorValue("1")
-public class Collection {
+public class Collection implements Serializable {
     @Id
     @Column(name = "id")
     private Integer id;
@@ -47,10 +45,13 @@ public class Collection {
     @Column(name = "subTitle")
     private String subTitle;
     @Column(name = "createDate")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date createDate;
     @Column(name = "editDate")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date editDate;
     @Column(name = "readDate")
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date readDate;
     @Column(name = "rate")
     private Double rate;

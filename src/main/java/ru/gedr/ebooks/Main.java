@@ -27,7 +27,7 @@ public class Main {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, 2016);
         c.set(Calendar.MONTH, Calendar.JANUARY + (quarter - 1) * 3);
-        System.out.println(c.getTime());
+        System.out.println("data >>" + c.getTime());
         System.exit(0);
 
         

@@ -5,6 +5,11 @@
  */
 package ru.gedr.ebooks.entities;
 
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -20,8 +25,13 @@ import lombok.ToString;
 @ToString
 @Getter 
 @Setter
-public class Memo {
+@Entity
+@Table(name="memos")
+public class Memo implements Serializable {
+    @Id
+    @Column(name="id")
     private int id;
+    @Column(name="txt")
     private String text;
 }
 

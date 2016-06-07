@@ -35,6 +35,4 @@ public class Chapter extends Collection {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(columnDefinition = "book_id", referencedColumnName = "id")
     private Book collection;
-
-    
 }
